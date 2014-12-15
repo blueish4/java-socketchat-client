@@ -1,0 +1,14 @@
+Each packet is a stream of JSON containing multiple pieces of information.
+Format: {"message_type":  <--can be either "system" or "message". "system" denotes a protocol section, such as authenticating with the server
+	"UserID":  <-- only sent if the message_type is "message"
+	"message": <-- message sent. Only sent if "message_type" is "message".
+	"open_port": <-- Open listening port for 5 seconds. Only sent in a "system" message.
+	"resync":  <-- Additional command for "system" which sends the whole chat log to client. Default is false.
+	"status":  <-- Reply for "system" message all packets from server. Pass is 200, timeout is 404, port closed is 403.
+	}
+
+Protocol:
+1. Client sends a "system" message over port 56789 to open port 67676, which listens for messages. This allows the server to only keep one port open constantly which doesn't need a writer.
+2. Client sends a "message" message over port 67676. If this fails due to a timeout, user is notified.
+3. Server sends system message to all clients apart from the sender to open listener ports.
+4. Server distributes the additional text to the appropriate people.
