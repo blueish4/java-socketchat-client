@@ -8,7 +8,7 @@ Format: {"message_type":  <--can be either "system" or "message". "system" denot
 	}
 
 Protocol:
-1. Client sends a "system" message over port 56789 to open port 67676, which listens for messages. This allows the server to only keep one port open constantly which doesn't need a writer.
-2. Client sends a "message" message over port 67676. If this fails due to a timeout, user is notified.
+1. Client sends a "system" message over port 56789 to open port 56788, which listens for messages. This allows the server to only keep one port open constantly which doesn't need a writer.
+2. Client sends a "message" message over port 56788. If this fails due to a timeout, user is notified.
 3. Server sends system message to all clients apart from the sender to open listener ports.
 4. Server distributes the additional text to the appropriate people.
