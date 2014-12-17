@@ -1,13 +1,21 @@
 package frontend;
 
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.Socket;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+
+import backend.SendData;
 
 public class Layout extends JFrame{
 	private JButton send;
@@ -64,12 +72,30 @@ public class Layout extends JFrame{
 	}
 	public void sendMessage(){
 		//TODO: Actually send the message.
+		SendData.setInput(messageBox.getText());
+		recieveMessage();
 		
 		//Set the text of the conversation to include the message sent
-		recievedText += messageBox.getText()+"\n";
+		//recievedText += messageBox.getText()+"\n";
 		recievedBox.setText(recievedText);
 		
 		//Clear the message box
 		messageBox.setText("");
+	}
+	public void recieveMessage(){
+		String serverAddress = JOptionPane.showInputDialog( 
+				"Enter IP Address of a machine that is\n" + 
+				"running the date service on port 9090:");
+	    Socket s;
+		try {
+			s = new Socket(serverAddress, 9090);
+			BufferedReader input = new BufferedReader(new InputStreamReader(s.getInputStream()));
+			String answer;
+	       	answer = input.readLine();
+	       	recievedText += answer;
+	       	recievedBox.setText(recievedText);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
