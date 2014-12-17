@@ -6,19 +6,32 @@ import java.net.Socket;
 
 import javax.swing.JOptionPane;
 
+import frontend.Layout;
+
 public class ReadData implements Runnable{
+	private String svrIP;
 	public void run(){
-		String serverAddress = JOptionPane.showInputDialog( 
-				"Enter IP Address of a machine that is\n" + 
-				"running the date service on port 9090:");
+		if(svrIP==null){
+			setServerIP();
+		}
+		System.out.println("Server IP: "+svrIP);
 	    Socket s;
 		try {
-			s = new Socket(serverAddress, 9090);
-			BufferedReader input = new BufferedReader(new InputStreamReader(s.getInputStream()));
-			String answer;
-	       	answer = input.readLine();
+			while(true){
+				s = new Socket(svrIP, 49150);
+				BufferedReader input = new BufferedReader(new InputStreamReader(s.getInputStream()));
+	       		String answer = input.readLine();
+	       		if(answer!=null)
+	       			Layout.recieveMessage(answer);
+	       		s.close();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
     }
+	public void setServerIP(){
+		svrIP = JOptionPane.showInputDialog( 
+				"Enter IP Address of a machine that is\n" + 
+				"running the date service on port 49150:");
+	}
 }
