@@ -25,6 +25,7 @@ public class SendData implements Runnable{
 		                if(Layout.shouldSendMessage){
 		                	System.out.println("Sending message");
 		                	for(int i =0;i<2;i++){
+		                		message= Layout.getMessageToSend();
 		                		System.out.println(message);
 		                		while(!message.equals("")){
 		                			System.out.println("Message isnt notthin, its: "+message);

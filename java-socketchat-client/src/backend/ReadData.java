@@ -21,8 +21,11 @@ public class ReadData implements Runnable{
 				s = new Socket(svrIP, 49150);
 				BufferedReader input = new BufferedReader(new InputStreamReader(s.getInputStream()));
 	       		String answer = input.readLine();
-	       		if(answer!=null)
+	       		
+	       		if(answer!=null){
+	       			System.out.println("DEBUG1 "+answer);
 	       			Layout.recieveMessage(answer);
+	       		}
 	       		s.close();
 			}
 		} catch (Exception e) {

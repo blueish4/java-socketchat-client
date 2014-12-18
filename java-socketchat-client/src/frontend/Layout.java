@@ -5,6 +5,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.net.Inet4Address;
+import java.net.UnknownHostException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -32,7 +34,12 @@ public class Layout extends JFrame{
 		recievedBox.setRows(28);
 		recievedBox.setEditable(false);
 		recievedBox.setFocusable(false);
-		
+		try {
+			recievedBox.setText(Inet4Address.getLocalHost().getHostAddress());
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		//Create the message box with 20 columns
 		messageBox = new JTextField(20);
 		
