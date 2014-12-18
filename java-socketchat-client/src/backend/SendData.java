@@ -13,23 +13,29 @@ public class SendData implements Runnable{
 	}
 	
 	public static void sendMessage(){
-		int i = 0;
 		try{
 	        ServerSocket listener = new ServerSocket(49150);
 	        System.out.println("Listener Opened.");
 	        try {
 	        	while(true){
 		            Socket socket = listener.accept();
+		            String message = Layout.getMessageToSend();
 		            try {
 		                PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-		                if(Layout.shouldSendMessage)
-		                	out.println(Layout.getMessageToSend());
-		                //Reset the sending flag to false
-		                if(i<2 && Layout.shouldSendMessage){
-		                	Layout.shouldSendMessage=false;
-		                	System.out.println(i);
-		                	i++;
+		                if(Layout.shouldSendMessage){
+		                	System.out.println("Sending message");
+		                	for(int i =0;i<2;i++){
+		                		System.out.println(message);
+		                		while(!message.equals("")){
+		                			System.out.println("Message isnt notthin, its: "+message);
+		                			out.println(message);
+		                			message = Layout.getMessageToSend();
+		                		}
+		                	}
 		                }
+		                //Reset the sending flag to false
+		                Layout.shouldSendMessage=false;
+		                
 		            } finally {
 		                socket.close();
 		            }

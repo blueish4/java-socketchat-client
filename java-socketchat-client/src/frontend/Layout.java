@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JTextArea;
@@ -75,10 +76,12 @@ public class Layout extends JFrame{
 		messageBox.setText("");
 	}
 	public static String getMessageToSend(){
-		return messageBox.getText();
+		String message = messageBox.getText();
+		return message;
 	}
 	public static void recieveMessage(String message){
 		recievedText += message+"\n";
 		recievedBox.setText(recievedText);
+		
 	}
 }
