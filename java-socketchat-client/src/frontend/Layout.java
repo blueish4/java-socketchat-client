@@ -7,9 +7,9 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -19,8 +19,9 @@ public class Layout extends JFrame{
 	private JButton send;
 	private static JTextField messageBox;
 	private static JTextArea recievedBox;
+	private static String uname;
+	private static String svrName;
 	private static String recievedText="";
-	public static boolean shouldSendMessage = false;
 	
 	public Layout(){
 		//Create the basic layout
@@ -37,7 +38,6 @@ public class Layout extends JFrame{
 		try {
 			recievedBox.setText(Inet4Address.getLocalHost().getHostAddress());
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		//Create the message box with 20 columns
@@ -50,6 +50,12 @@ public class Layout extends JFrame{
 		HandlerClass handler = new HandlerClass();
 		messageBox.addKeyListener(new MyKeyListener());
 		send.addActionListener(handler);
+		
+		//Set the server to connect to
+		svrName = JOptionPane.showInputDialog("Input the server's IP address.");
+		
+		//Get a username to send the data as
+		uname = JOptionPane.showInputDialog("What username would you like to use for this session?");
 		
 		//Add all of the elements to the layout
 		add(recievedBox);
@@ -66,6 +72,7 @@ public class Layout extends JFrame{
 			}
 		}
 	}
+	
 	public class MyKeyListener extends KeyAdapter{
 		public void keyPressed(KeyEvent ke){
 			//If the key pressed was enter, send message
@@ -74,17 +81,24 @@ public class Layout extends JFrame{
 			}
 		}
 	}
+	
 	public void sendMessage(){
 		(new Thread(new client())).start();
 	}
+	
 	public static String getMessageToSend(){
-		String message = messageBox.getText();
+		//TODO: This will be made into a JSON message when I get around to it, as per the protocol
+		String message = uname + ": " + messageBox.getText();
 		messageBox.setText("");
 		return message;
 	}
+	
 	public static void recieveMessage(String message){
-		recievedText += message+"\n";
+		recievedText += message + "\n";
 		recievedBox.setText(recievedText);
-		
+	}
+	
+	public static String getServerIP(){
+		return svrName;
 	}
 }

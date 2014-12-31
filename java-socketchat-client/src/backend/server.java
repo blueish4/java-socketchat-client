@@ -12,7 +12,7 @@ public class server implements Runnable {
 	@Override
 	public void run() {
 		try {      
-		      System.out.println("Listening");
+		      System.out.println("Server Listening");
 		      while (true) {
 		    	 try{
 			    	 ServerSocket ssock = new ServerSocket(49149);

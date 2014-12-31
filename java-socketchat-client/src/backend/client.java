@@ -10,14 +10,19 @@ import javax.swing.JOptionPane;
 
 import frontend.Layout;
 
+//This class sends out data to the recipients
 public class client implements Runnable{
 	@Override
 	public void run() {
 		try {
-	        InetAddress addr = InetAddress.getByName("127.0.0.1");
+	        InetAddress addr = InetAddress.getByName(Layout.getServerIP());
 	        Socket theSocket = new Socket(addr, 49149);
 	        PrintWriter out = new PrintWriter(theSocket.getOutputStream(), true);
-	        System.out.println("Connected to "+ theSocket.getInetAddress()+ " on port " + theSocket.getPort() + " from port "+ theSocket.getLocalPort() + " of "+ theSocket.getLocalAddress());
+	        System.out.println(
+	        		"Connected to "+ theSocket.getInetAddress()+ 
+	        		" on port " + theSocket.getPort() + 
+	        		" from port "+ theSocket.getLocalPort() + 
+	        		" of "+ theSocket.getLocalAddress());
 	        out.println(Layout.getMessageToSend());
 	        theSocket.close();
 	     } 
