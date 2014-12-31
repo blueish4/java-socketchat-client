@@ -13,7 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import backend.SendData;
+import backend.client;
 
 public class Layout extends JFrame{
 	private JButton send;
@@ -75,15 +75,11 @@ public class Layout extends JFrame{
 		}
 	}
 	public void sendMessage(){
-		//Flag that the message should be sent
-		shouldSendMessage=true;
-		//Send the message
-		SendData.sendMessage();
-		//Clear the message box
-		messageBox.setText("");
+		(new Thread(new client())).start();
 	}
 	public static String getMessageToSend(){
 		String message = messageBox.getText();
+		messageBox.setText("");
 		return message;
 	}
 	public static void recieveMessage(String message){

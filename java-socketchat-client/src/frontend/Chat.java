@@ -2,8 +2,7 @@ package frontend;
 
 import javax.swing.JFrame;
 
-import backend.ReadData;
-import backend.SendData;
+import backend.server;
 
 public class Chat {
 
@@ -12,8 +11,6 @@ public class Chat {
 		frame.setSize(300, 600);
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		(new Thread(new ReadData())).start();
-		(new Thread(new SendData())).start();
-		
+		(new Thread(new server())).start();
 	}
 }
