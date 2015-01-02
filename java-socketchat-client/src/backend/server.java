@@ -20,7 +20,7 @@ public class server implements Runnable {
 			         System.out.println("Connected to client");
 			         BufferedReader input = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 			         String answer = input.readLine();
-			         Layout.recieveMessage(sock.getInetAddress()+ answer);
+			         Layout.recieveMessage(answer);
 			         if(!sock.getInetAddress().toString().equals(sock.getLocalAddress().toString())){
 			        	 (new Thread(new client(sock.getInetAddress().toString(), answer))).start();
 			         }

@@ -106,6 +106,16 @@ public class Layout extends JFrame{
 		recievedBox.setText(recievedText);
 	}
 	
+	public static String getPreviousMessage(){
+		String toReturn;
+		try{
+			toReturn = recievedBox.getText().split("\\n")[recievedBox.getText().split("\\n").length-1];
+		}catch(ArrayIndexOutOfBoundsException e){
+			toReturn = "";
+		}
+			return toReturn;
+	}
+	
 	public static String getServerIP(){
 		return svrName;
 	}

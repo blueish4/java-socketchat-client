@@ -14,6 +14,7 @@ public class client implements Runnable{
 	String recipient;
 	
 	public client(String recip, String msg){
+		System.out.println("PREVMSG: "+Layout.getPreviousMessage());
 		message = msg;
 		if(recip.startsWith("/")){
 			recipient = recip.substring(1);
@@ -26,6 +27,9 @@ public class client implements Runnable{
 	@Override
 	public void run() {
 		try {
+			if(Layout.getPreviousMessage().equals(message)){
+				this.finalize();
+			}
 	        InetAddress addr = InetAddress.getByName(recipient);
 	        Socket theSocket = new Socket(addr, 49149);
 	        PrintWriter out = new PrintWriter(theSocket.getOutputStream(), true);
@@ -45,6 +49,8 @@ public class client implements Runnable{
 	     }
 	     catch (IOException e) {
 	        System.err.println(e);
-	     }
+	     } catch (Throwable e) {
+			e.printStackTrace();
+		}
 	}
 }
