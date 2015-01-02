@@ -21,7 +21,7 @@ public class server implements Runnable {
 			         BufferedReader input = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 			         String answer = input.readLine();
 			         Layout.recieveMessage(sock.getInetAddress()+ answer);
-			         if(sock.getInetAddress()!=sock.getLocalAddress()){
+			         if(!sock.getInetAddress().toString().equals(sock.getLocalAddress().toString())){
 			        	 (new Thread(new client(sock.getInetAddress().toString(), answer))).start();
 			         }
 			         ssock.close();

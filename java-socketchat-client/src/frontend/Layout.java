@@ -57,6 +57,14 @@ public class Layout extends JFrame{
 		//Get a username to send the data as
 		uname = JOptionPane.showInputDialog("What username would you like to use for this session?");
 		
+		//Aknowledge the connection
+		try {
+			(new Thread(new client(svrName,Inet4Address.getLocalHost().getHostAddress()+ " has joined the room as "+uname))).start();
+		} catch (UnknownHostException e) {
+			//Localhost will always be known... right?
+			e.printStackTrace();
+		}
+		
 		//Add all of the elements to the layout
 		add(recievedBox);
 		add(messageBox);
