@@ -83,7 +83,7 @@ public class Layout extends JFrame{
 	}
 	
 	public void sendMessage(){
-		(new Thread(new client())).start();
+		(new Thread(new client(svrName, getMessageToSend()))).start();
 	}
 	
 	public static String getMessageToSend(){

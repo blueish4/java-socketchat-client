@@ -6,16 +6,27 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
-import javax.swing.JOptionPane;
-
 import frontend.Layout;
 
 //This class sends out data to the recipients
 public class client implements Runnable{
+	String message;
+	String recipient;
+	
+	public client(String recip, String msg){
+		message = msg;
+		if(recip.startsWith("/")){
+			recipient = recip.substring(1);
+		}else{
+			recipient = recip;
+		}
+		
+	}
+	
 	@Override
 	public void run() {
 		try {
-	        InetAddress addr = InetAddress.getByName(Layout.getServerIP());
+	        InetAddress addr = InetAddress.getByName(recipient);
 	        Socket theSocket = new Socket(addr, 49149);
 	        PrintWriter out = new PrintWriter(theSocket.getOutputStream(), true);
 	        System.out.println(
@@ -23,7 +34,7 @@ public class client implements Runnable{
 	        		" on port " + theSocket.getPort() + 
 	        		" from port "+ theSocket.getLocalPort() + 
 	        		" of "+ theSocket.getLocalAddress());
-	        out.println(Layout.getMessageToSend());
+	        out.println(message);
 	        theSocket.close();
 	     } 
 	     catch (UnknownHostException e) {
