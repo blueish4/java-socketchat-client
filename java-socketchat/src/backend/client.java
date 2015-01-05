@@ -3,27 +3,22 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.InetAddress;
 import java.net.Socket;
-import java.net.SocketException;
-import java.net.UnknownHostException;
 
 import frontend.Layout;
 
 //This class sends out data to the recipients
-public class client implements Runnable{
-	String message;
+public class client {
 	String server;
 	
 	public client(String svr){
 		server = svr;
 	}
 	
-	@Override
-	public void run() {
+	public static void main() {
 		try{
 			// connect to server socket
-			Socket ssock = new Socket(server, 49149);
+			Socket ssock = new Socket("127.0.0.1", 49149);
 			BufferedReader in = new BufferedReader(new InputStreamReader(ssock.getInputStream()));
 				
 			// listen for & print incoming messages
@@ -34,7 +29,8 @@ public class client implements Runnable{
 						String input;
 						try {
 							while ((input = in.readLine()) != null) {
-								Layout.recieveMessage("IN: " + input);
+								//Layout.recieveMessage("IN: " + input);
+								System.out.println("IN: "+input);
 							}
 						} catch (IOException e) {
 							System.err.println("Exception caught when trying to read from client");
@@ -47,10 +43,11 @@ public class client implements Runnable{
 			
 			// read stdin
 			while (true) {
-				Layout.recieveMessage("PRIVMSG: "+(new BufferedReader(new InputStreamReader(System.in))).readLine());
+				(new PrintWriter(ssock.getOutputStream(), true)).println((new BufferedReader(new InputStreamReader(System.in))).readLine());
 			}
 		}catch(Exception e){
 			System.err.println("Something went wrong "+e);
+			e.printStackTrace();
 		}
 	}
 }

@@ -6,28 +6,37 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-import frontend.Layout;
-
-/*Credit to Ben Orchard for this section
- * https://github.com/raehik/networkChat
- */
-
-
 public class ClientHandler implements Runnable {
 	Socket csock;
 	Server server;
-	PrintWriter out;
 	BufferedReader in;
+	PrintWriter out;
 	
 	public ClientHandler(Socket client, Server server) {
 		this.csock = client;
 		this.server = server;
+		boot();
+	}
+	
+	public void boot() {
+		// set up IO
 		try {
 			out = new PrintWriter(csock.getOutputStream(), true);
 			in = new BufferedReader(new InputStreamReader(csock.getInputStream()));
 		} catch (IOException e) {
-			System.err.println("Exception caught when trying to set up IO with a client");
+            exitWith("Exception caught when trying to set up IO with a client", 1);
 		}
+	}
+	
+	/**
+	 * Print an error to stdout and exit.
+	 * 
+	 * @param desc		String to print before exiting.
+	 * @param exit_code	Integer to exit with.
+	 */
+	private void exitWith(String desc, int exit_code) {
+		System.err.println("ERROR: " + desc);
+		System.exit(exit_code);
 	}
 	
 	public void run() {
@@ -36,12 +45,11 @@ public class ClientHandler implements Runnable {
 			String input;
 			try {
 				while ((input = in.readLine()) != null) {
-					//Send out the messages
-					Layout.sendMessage(input);
+					server.relayMessage(input);
 					//System.out.println("I got a message!: " + input);
 				}
 			} catch (IOException e) {
-				System.err.println("Exception caught when trying to read from client: ClientHandler.java");
+				exitWith("Exception caught when trying to read from client", 1);
 			}
 		}
 	}

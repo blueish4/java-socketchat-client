@@ -5,7 +5,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Inet4Address;
+import java.net.Socket;
 import java.net.UnknownHostException;
 
 import javax.swing.JButton;
@@ -14,7 +19,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import backend.client;
+//import backend.client;
 
 public class Layout extends JFrame{
 	private JButton send;
@@ -23,6 +28,7 @@ public class Layout extends JFrame{
 	private static String uname;
 	private static String svrName;
 	private static String recievedText="";
+	private static Socket ssock;
 	
 	public Layout(){
 		//Create the basic layout
@@ -60,6 +66,7 @@ public class Layout extends JFrame{
 		uname = JOptionPane.showInputDialog("What username would you like to use for this session?");
 		
 		//Ack the connection and announce it
+		sendMessage(uname + " joined the server");
 		
 		//Add all of the elements to the layout
 		add(recievedBox);
@@ -88,7 +95,12 @@ public class Layout extends JFrame{
 	
 	public static void sendMessage(String message){
 		//erm...this needs to work in a bit.
-		System.out.println("Message will be sent here."+message);
+		try {
+			(new PrintWriter(ssock.getOutputStream(), true)).println(message);
+			System.out.println("SENDING MSG: "+message);
+		} catch (IOException e) {
+			System.err.println("Error sending message- IOException");
+		}
 	}
 	
 	public static String getMessageToSend(){
@@ -115,5 +127,53 @@ public class Layout extends JFrame{
 	
 	public static String getServerIP(){
 		return svrName;
+	}
+	
+	
+	
+	
+	
+	
+	
+	BufferedReader in;
+	PrintWriter out;
+	
+	// Nickname. Can be changed.
+	String nick;
+	
+	public static void main() {
+		// connect to server socket
+		try {
+		    ssock = new Socket("127.0.0.1", 49149);
+        } catch (UnknownHostException e) {
+        	System.err.println("Can't find server at location");
+        } catch (IOException e) {
+        	System.err.println("IOException at server location - is there a server running on that port?");
+		}
+		// listen for & print incoming messages
+		Runnable listener = new Runnable() {
+			public void run() {
+				BufferedReader in;
+				try {
+						in = new BufferedReader(new InputStreamReader(ssock.getInputStream()));
+					
+					while (true) {
+						// read client messages
+						String input;
+						try {
+							while ((input = in.readLine()) != null) {
+								System.out.println("IN: " + input);
+							}
+						} catch (IOException e) {
+							System.err.println("Exception caught when trying to read from client");
+						}
+					}
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+		};
+		Thread listenThread = new Thread(listener);
+		listenThread.start();
 	}
 }
