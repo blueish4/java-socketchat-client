@@ -3,16 +3,17 @@ package backend;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 public class Server {
-	int port;
 	ServerSocket ssock;
-	List<ClientHandler> handlers;
+	static List<ClientHandler> handlers;
 	
-	public Server(int port) {
-		this.port = port;
+	public Server() {
 		this.handlers = new ArrayList<ClientHandler>();
 		boot();
 	}
@@ -36,9 +37,10 @@ public class Server {
 	 */
 	private void boot() {
 		try {
-			ssock = new ServerSocket(port);
+			ssock = new ServerSocket(49149);
 		} catch (IOException e) {
-			exitWith("IOException on port " + port, 1);
+			JOptionPane.showMessageDialog(null, "There is already a server running on this machine. Continuing without...", 
+					"Socket Chat Program v0.2", JOptionPane.WARNING_MESSAGE);
 		}
 	}
 	
@@ -62,16 +64,29 @@ public class Server {
 		}
 	}
 
-	//public void relayMessage(String[] message) {
 	public void relayMessage(String message) {
-		//System.out.println("Heya, I'm sending messages, yo.");
 		for (ClientHandler handler : handlers) {
 			handler.sendMessage(message);
 		}
 	}
+	public static void removeClient(String addr){
+		try {
+			System.out.println(addr);
+			for(ClientHandler handler : handlers){
+				System.out.println("DEBUGGING: "+handler.csock.getLocalAddress());
+			}
+			handlers.remove((new ClientHandler((new Socket(addr,49149)), (new Server()))));
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (NullPointerException e){
+			System.err.println("Hostname non-existant");
+		}
+	}
 	
 	public static void main() {
-		Server server = new Server(49149);
+		Server server = new Server();
 		
 		// set up listener thread (for picking up & assigning clients)
 		Runnable listener = new Runnable() {

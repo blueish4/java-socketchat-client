@@ -46,10 +46,9 @@ public class ClientHandler implements Runnable {
 			try {
 				while ((input = in.readLine()) != null) {
 					server.relayMessage(input);
-					//System.out.println("I got a message!: " + input);
 				}
 			} catch (IOException e) {
-				exitWith("Exception caught when trying to read from client", 1);
+				exitWith("Exception caught when trying to read from client- ClientHandler", 1);
 			}
 		}
 	}

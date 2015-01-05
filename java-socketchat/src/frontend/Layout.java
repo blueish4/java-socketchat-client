@@ -19,6 +19,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import backend.Server;
+
 public class Layout extends JFrame{
 	private JButton send;
 	private static JTextField messageBox;
@@ -44,9 +46,8 @@ public class Layout extends JFrame{
 		
 		try {
 			recievedBox.setText(Inet4Address.getLocalHost().getHostAddress());
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		}
+		} catch (UnknownHostException e) {}
+		
 		//Create the message box with 20 columns
 		messageBox = new JTextField(20);
 		
@@ -64,7 +65,7 @@ public class Layout extends JFrame{
 		
 		//Init the socket bae to deny the NPEs
 		try {
-			ssock = new Socket("127.0.0.1", 49149);
+			ssock = new Socket(svrName, 49149);
 		} catch (UnknownHostException e1) {
 			e1.printStackTrace();
 		} catch (IOException e1) {
@@ -76,7 +77,11 @@ public class Layout extends JFrame{
 		
 		
 		//Ack the connection and announce it
-		sendMessage(uname + " joined the server");
+		try {
+			sendMessage(uname + " joined the server on "+Inet4Address.getLocalHost().getHostAddress());
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
 		
 		//Add all of the elements to the layout
 		add(recievedBox);
@@ -105,13 +110,24 @@ public class Layout extends JFrame{
 	}
 	
 	public static void sendMessage(String message){
-		//erm...this needs to work in a bit.
-		//out.println() was used in the other app, similar usage here
 		try {
 			(new PrintWriter(ssock.getOutputStream(), true)).println(message);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		
+		//Processing the input for commands
+		if(message.equals(uname+": /die")){
+			try {
+				Server.removeClient(Inet4Address.getLocalHost().getHostAddress());
+				ssock.close();
+			} catch (UnknownHostException e) {
+				e.printStackTrace();
+			}catch (IOException e){
+				System.err.println("Failed to close ssock. FML.");
+			}
+			System.out.println("Hopefully killed client. Quitting...");
+			System.exit(0);
 		}
 	}
 	
@@ -127,20 +143,6 @@ public class Layout extends JFrame{
 		recievedBox.setText(recievedText);
 	}
 	
-	public static String getPreviousMessage(){
-		String toReturn;
-		try{
-			toReturn = recievedBox.getText().split("\\n")[recievedBox.getText().split("\\n").length-1];
-		}catch(ArrayIndexOutOfBoundsException e){
-			toReturn = "";
-		}
-			return toReturn;
-	}
-	
-	public static String getServerIP(){
-		return svrName;
-	}
-	
 	public static void main() {
 		try{
 			// connect to server socket
@@ -154,8 +156,7 @@ public class Layout extends JFrame{
 						String input;
 						try {
 							while ((input = in.readLine()) != null) {
-								recieveMessage("IN: " + input);
-								System.out.println("IN: "+input);
+								recieveMessage(input);
 							}
 						} catch (IOException e) {
 							System.err.println("Exception caught when trying to read from client");
