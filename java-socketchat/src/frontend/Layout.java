@@ -33,14 +33,6 @@ public class Layout extends JFrame{
 	public Layout(){
 		super("Socket Chat Client v0.1");
 		
-		//Init the socket bae to deny the NPEs
-		try {
-			ssock = new Socket("127.0.0.1", 49149);
-		} catch (UnknownHostException e1) {
-			e1.printStackTrace();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
 		//Create the basic layout
 		setLayout(new FlowLayout());
 		
@@ -71,6 +63,15 @@ public class Layout extends JFrame{
 		
 		//Set the server to connect to and connect to it
 		svrName = JOptionPane.showInputDialog("Input the server's IP address.");
+		
+		//Init the socket bae to deny the NPEs
+		try {
+			ssock = new Socket("127.0.0.1", 49149);
+		} catch (UnknownHostException e1) {
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 		
 		//Get a username to send the data as
 		uname = JOptionPane.showInputDialog("What username would you like to use for this session?");
