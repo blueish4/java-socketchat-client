@@ -19,8 +19,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-//import backend.client;
-
 public class Layout extends JFrame{
 	private JButton send;
 	private static JTextField messageBox;

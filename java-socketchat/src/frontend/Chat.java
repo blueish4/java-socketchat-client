@@ -4,7 +4,6 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import backend.Server;
-import backend.client;
 
 public class Chat {
 
