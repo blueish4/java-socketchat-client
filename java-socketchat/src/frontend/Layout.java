@@ -28,11 +28,20 @@ public class Layout extends JFrame{
 	private static String uname;
 	private static String svrName;
 	private static String recievedText="";
-	private static Socket ssock;
+	private static Socket ssock; 
 	
 	public Layout(){
-		//Create the basic layout
 		super("Socket Chat Client v0.1");
+		
+		//Init the socket bae to deny the NPEs
+		try {
+			ssock = new Socket("127.0.0.1", 49149);
+		} catch (UnknownHostException e1) {
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		//Create the basic layout
 		setLayout(new FlowLayout());
 		
 		//Create the box with the conversation inside it, while making it not editable
@@ -42,6 +51,7 @@ public class Layout extends JFrame{
 		recievedBox.setRows(28);
 		recievedBox.setEditable(false);
 		recievedBox.setFocusable(false);
+		
 		try {
 			recievedBox.setText(Inet4Address.getLocalHost().getHostAddress());
 		} catch (UnknownHostException e) {
@@ -65,6 +75,7 @@ public class Layout extends JFrame{
 		//Get a username to send the data as
 		uname = JOptionPane.showInputDialog("What username would you like to use for this session?");
 		
+		
 		//Ack the connection and announce it
 		sendMessage(uname + " joined the server");
 		
@@ -72,6 +83,7 @@ public class Layout extends JFrame{
 		add(recievedBox);
 		add(messageBox);
 		add(send);
+		
 	}
 	
 	//Handler class to accompany actions. 
@@ -95,11 +107,12 @@ public class Layout extends JFrame{
 	
 	public static void sendMessage(String message){
 		//erm...this needs to work in a bit.
+		//out.println() was used in the other app, similar usage here
 		try {
 			(new PrintWriter(ssock.getOutputStream(), true)).println(message);
-			System.out.println("SENDING MSG: "+message);
 		} catch (IOException e) {
-			System.err.println("Error sending message- IOException");
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
@@ -129,51 +142,33 @@ public class Layout extends JFrame{
 		return svrName;
 	}
 	
-	
-	
-	
-	
-	
-	
-	BufferedReader in;
-	PrintWriter out;
-	
-	// Nickname. Can be changed.
-	String nick;
-	
 	public static void main() {
-		// connect to server socket
-		try {
-		    ssock = new Socket("127.0.0.1", 49149);
-        } catch (UnknownHostException e) {
-        	System.err.println("Can't find server at location");
-        } catch (IOException e) {
-        	System.err.println("IOException at server location - is there a server running on that port?");
-		}
-		// listen for & print incoming messages
-		Runnable listener = new Runnable() {
-			public void run() {
-				BufferedReader in;
-				try {
-						in = new BufferedReader(new InputStreamReader(ssock.getInputStream()));
-					
+		try{
+			// connect to server socket
+			BufferedReader in = new BufferedReader(new InputStreamReader(ssock.getInputStream()));
+				
+			// listen for & print incoming messages
+			Runnable listener = new Runnable() {
+				public void run() {
 					while (true) {
 						// read client messages
 						String input;
 						try {
 							while ((input = in.readLine()) != null) {
-								System.out.println("IN: " + input);
+								recieveMessage("IN: " + input);
+								System.out.println("IN: "+input);
 							}
 						} catch (IOException e) {
 							System.err.println("Exception caught when trying to read from client");
 						}
 					}
-				} catch (IOException e1) {
-					e1.printStackTrace();
 				}
-			}
-		};
-		Thread listenThread = new Thread(listener);
-		listenThread.start();
+			};
+			Thread listenThread = new Thread(listener);
+			listenThread.start();
+		}catch(Exception e){
+			System.err.println("Something went wrong "+e);
+			e.printStackTrace();
+		}
 	}
 }

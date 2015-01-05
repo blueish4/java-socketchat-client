@@ -14,10 +14,10 @@ public class Chat {
 			Server.main();
 			System.out.println("Running server.");
 		}
-		client.main();
-		/*Layout frame = new Layout();
+		Layout frame = new Layout();
+		frame.main();
 		frame.setSize(300, 600);
 		frame.setVisible(true);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);*/
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 }
