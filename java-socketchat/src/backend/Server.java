@@ -11,10 +11,10 @@ import javax.swing.JOptionPane;
 
 public class Server {
 	ServerSocket ssock;
-	static List<ClientHandler> handlers;
+	List<ClientHandler> handlers;
 	
 	public Server() {
-		this.handlers = new ArrayList<ClientHandler>();
+		handlers = new ArrayList<ClientHandler>();
 		boot();
 	}
 	
@@ -69,9 +69,10 @@ public class Server {
 			handler.sendMessage(message);
 		}
 	}
-	public static void removeClient(String addr){
+	public void removeClient(String addr){
 		try {
-			System.out.println(addr);
+			System.out.println("Wants to leave: "+addr);
+			System.out.println(handlers.size());
 			for(ClientHandler handler : handlers){
 				System.out.println("DEBUGGING: "+handler.csock.getLocalAddress());
 			}

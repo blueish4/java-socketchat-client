@@ -44,7 +44,14 @@ public class ClientHandler implements Runnable {
 			// read client messages
 			String input;
 			try {
+				
 				while ((input = in.readLine()) != null) {
+					if(input.endsWith("/die")){
+						String IPtoRemove = input.split(" /die")[0];
+						System.out.println(input);
+						System.out.println("ClientHandler called remove! It was SUPER EFFECTIVE! "+ IPtoRemove);
+						server.removeClient(IPtoRemove.replace("/", ""));
+					}
 					server.relayMessage(input);
 				}
 			} catch (IOException e) {

@@ -16,6 +16,7 @@ import java.net.UnknownHostException;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -25,13 +26,14 @@ public class Layout extends JFrame{
 	private JButton send;
 	private static JTextField messageBox;
 	private static JTextArea recievedBox;
+	private JScrollPane scrollPane;
 	private static String uname;
 	private static String svrName;
 	private static String recievedText="";
 	private static Socket ssock; 
 	
 	public Layout(){
-		super("Socket Chat Client v0.1");
+		super("Socket Chat Client v0.2");
 		
 		//Create the basic layout
 		setLayout(new FlowLayout());
@@ -43,6 +45,8 @@ public class Layout extends JFrame{
 		recievedBox.setRows(28);
 		recievedBox.setEditable(false);
 		recievedBox.setFocusable(false);
+		
+		scrollPane = new JScrollPane(recievedBox, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		
 		try {
 			recievedBox.setText(Inet4Address.getLocalHost().getHostAddress());
@@ -84,7 +88,7 @@ public class Layout extends JFrame{
 		}
 		
 		//Add all of the elements to the layout
-		add(recievedBox);
+		add(scrollPane);
 		add(messageBox);
 		add(send);
 		
@@ -110,16 +114,13 @@ public class Layout extends JFrame{
 	}
 	
 	public static void sendMessage(String message){
-		try {
-			(new PrintWriter(ssock.getOutputStream(), true)).println(message);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 		
 		//Processing the input for commands
 		if(message.equals(uname+": /die")){
 			try {
-				Server.removeClient(Inet4Address.getLocalHost().getHostAddress());
+				message = Inet4Address.getLocalHost().getHostAddress()+" /die";
+				(new PrintWriter(ssock.getOutputStream(), true)).println(message);
+				//Server.removeClient(Inet4Address.getLocalHost().getHostAddress());
 				ssock.close();
 			} catch (UnknownHostException e) {
 				e.printStackTrace();
@@ -129,6 +130,12 @@ public class Layout extends JFrame{
 			System.out.println("Hopefully killed client. Quitting...");
 			System.exit(0);
 		}
+		try {
+			(new PrintWriter(ssock.getOutputStream(), true)).println(message);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 	}
 	
 	public static String getMessageToSend(){
@@ -159,7 +166,7 @@ public class Layout extends JFrame{
 								recieveMessage(input);
 							}
 						} catch (IOException e) {
-							System.err.println("Exception caught when trying to read from client");
+							System.err.println("Exception caught when trying to read from client-- CLIENT.JAVA");
 						}
 					}
 				}
