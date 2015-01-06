@@ -5,6 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JOptionPane;
@@ -73,14 +74,16 @@ public class Server {
 		try {
 			System.out.println("Wants to leave: "+addr);
 			System.out.println(handlers.size());
+			List<ClientHandler> temp = handlers;
 			for(ClientHandler handler : handlers){
-				System.out.println("DEBUGGING: "+handler.csock.getLocalAddress());
+				System.out.println("DEBUGGING: "+addr+" "+handler.csock.getInetAddress().toString());
+				if(handler.csock.getInetAddress().toString().equals("/"+addr)){
+					temp.remove(handler);
+					System.out.println("Removed exiting client.");
+				}
 			}
-			handlers.remove((new ClientHandler((new Socket(addr,49149)), (new Server()))));
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+			handlers=temp;
+			System.out.println("Final size: "+handlers.size()+"/"+temp.size());
 		} catch (NullPointerException e){
 			System.err.println("Hostname non-existant");
 		}

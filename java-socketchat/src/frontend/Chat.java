@@ -9,7 +9,7 @@ public class Chat {
 
 	public static void main(String[] args) {
 		String[] options = {"yes", "no"};
-		if(JOptionPane.showOptionDialog(null, "Should this instance also run a server?", "Java Chat program v0.1", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0])==0){
+		if(JOptionPane.showOptionDialog(null, "Should this instance also run a server?", "Java Chat program v0.2", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0])==0){
 			Server.main();
 			System.out.println("Running server.");
 		}
