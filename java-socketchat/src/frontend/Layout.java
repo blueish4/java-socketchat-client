@@ -20,6 +20,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import com.sun.corba.se.impl.presentation.rmi.DynamicAccessPermission;
+
 import backend.Server;
 
 public class Layout extends JFrame{
@@ -31,6 +33,7 @@ public class Layout extends JFrame{
 	private static String svrName;
 	private static String recievedText="";
 	private static Socket ssock; 
+	private static boolean dying = false;
 	
 	public Layout(){
 		super("Socket Chat Client v0.2");
@@ -120,15 +123,13 @@ public class Layout extends JFrame{
 			try {
 				message = Inet4Address.getLocalHost().getHostAddress()+" /die";
 				(new PrintWriter(ssock.getOutputStream(), true)).println(message);
-				//Server.removeClient(Inet4Address.getLocalHost().getHostAddress());
 				ssock.close();
+				dying = true;
 			} catch (UnknownHostException e) {
 				e.printStackTrace();
 			}catch (IOException e){
 				System.err.println("Failed to close ssock. FML.");
 			}
-			System.out.println("Hopefully killed client. Quitting...");
-			System.exit(0);
 		}
 		try {
 			(new PrintWriter(ssock.getOutputStream(), true)).println(message);
@@ -166,7 +167,12 @@ public class Layout extends JFrame{
 								recieveMessage(input);
 							}
 						} catch (IOException e) {
-							System.err.println("Exception caught when trying to read from client-- CLIENT.JAVA");
+							if(dying){
+								System.exit(0);
+							}else{
+								System.err.println("Exception caught when trying to read from client-- LAYOUT.JAVA");
+							}
+							
 						}
 					}
 				}
